@@ -29,7 +29,32 @@
       slices)))
 
 (defn matrix-slices [size m]
-  (let [[vectors] [(concat m (transpose m))]]
+  (let [[vectors] [(concat m (transpose m) (diags m))]]
     (mapcat (fn [v] (chunks size v)) vectors)))
 
-(defn slice-products [size m] [])
+(defn slice-products [size m]
+  (reduce (fn [map vector]
+            (assoc map vector (reduce * vector)))
+          {}
+          (matrix-slices size m)))
+
+(defn max-product-slice [size m]
+  (key (apply max-key val (slice-products size m))))
+
+(defn reduce-doubles [nums]
+  (reduce (fn [map num]
+            (assoc map num (* 2 num)))
+          {}
+          nums))
+
+(defn diag-padded [m]
+  (for [i (range 0 (count m))]
+    (let [pad-vector (map (fn [_] nil) (range 0 i))]
+      (concat pad-vector (m i)))))
+
+(defn forward-diags [m]
+  (for [i (range (- (count m)) (count m))]
+    (diagonal m i)))
+
+(defn diags [m]
+  (concat (forward-diags m) (forward-diags (transpose m))))

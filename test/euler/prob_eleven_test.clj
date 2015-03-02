@@ -21,3 +21,18 @@
              [1 4 7]
              [2 5 8]
              [3 6 9]] (matrix-slices 3 m))))))
+
+;;[[1 2] [3 4]
+;;[1 2] [3 4] [1 3] [2 4]
+;;2 12 3 8
+(deftest test-multiplies-matrix-slices
+  (testing "it maps slices to products"
+    (is (= {[1 2] 2 [3 4] 12 [1 3] 3 [2 4] 8} (slice-products 2 [[1 2] [3 4]])))))
+
+(deftest test-finds-max-product-slice
+  (testing "it gives the slice of size n which has greatest product"
+    (is (= [3 4] (max-product-slice 2 [[1 2] [3 4]])))))
+
+(deftest test-finds-the-answer
+  (testing "it finds max product of our big grid"
+    (is (= "?" (reduce * (max-product-slice 4 grid))))))
